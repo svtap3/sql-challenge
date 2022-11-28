@@ -1,66 +1,70 @@
 # sql-challenge
 
-Tables
-drop table "dept_emp"
-CREATE TABLE "dept_emp" (
-    "emp_no" integer   NOT NULL,
-    "dept_no" varchar   NOT NULL
-);
-
-drop table "dept_manager"
-CREATE TABLE "dept_manager" (
-    "dept_no" varchar   NOT NULL,
-    "emp_no" integer   NOT NULL,
-    CONSTRAINT "pk_dept_manager" PRIMARY KEY (
-        "emp_no"
-     )
-);
-
+Tables (Updated 11/27/22)
 CREATE TABLE "departments" (
     "dept_no" varchar   NOT NULL,
-    "dept_name" varchar(50)   NOT NULL,
+    "dept_name" varchar   NOT NULL,
     CONSTRAINT "pk_departments" PRIMARY KEY (
         "dept_no"
      )
 );
 
+CREATE TABLE "titles" (
+    "title_id" varchar   NOT NULL,
+    "title" varchar   NOT NULL,
+    CONSTRAINT "pk_titles" PRIMARY KEY (
+        "title_id"
+     )
+);
+
+CREATE TABLE "dept_manager" (
+    "dept_no" varchar   NOT NULL,
+    "emp_no" integer   NOT NULL
+);
+
+CREATE TABLE "salaries" (
+    "emp_no" integer   NOT NULL,
+    "salary" integer   NOT NULL
+);
+
+CREATE TABLE "dept_emp" (
+    "emp_no" integer   NOT NULL,
+    "dept_no" varchar   NOT NULL
+);
+
 CREATE TABLE "employees" (
-    "emp_no" int   NOT NULL,
+    "emp_no" integer   NOT NULL,
     "emp_title_id" varchar   NOT NULL,
     "birth_date" date   NOT NULL,
-    "first_name" varchar(50)   NOT NULL,
-    "last_name" varchar(50)   NOT NULL,
-    "sex" varchar(50)   NOT NULL,
+    "first_name" varchar   NOT NULL,
+    "last_name" varchar   NOT NULL,
+    "sex" varchar   NOT NULL,
     "hire_date" date   NOT NULL,
     CONSTRAINT "pk_employees" PRIMARY KEY (
         "emp_no"
      )
 );
 
-CREATE TABLE "salaries" (
-    "emp_no" int   NOT NULL,
-    "salary" integer   NOT NULL,
-    CONSTRAINT "pk_salaries" PRIMARY KEY (
-        "emp_no"
-     )
-);
+ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_dept_no" FOREIGN KEY("dept_no")
+REFERENCES "departments" ("dept_no");
 
-CREATE TABLE "titles" (
-    "title_id" varchar   NOT NULL,
-    "title" varchar(50)   NOT NULL,
-    CONSTRAINT "pk_titles" PRIMARY KEY (
-        "title_id"
-     )
-);
+ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "employees" ("emp_no");
 
-select * from dept_emp;
+ALTER TABLE "salaries" ADD CONSTRAINT "fk_salaries_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "employees" ("emp_no");
 
-select emp_no, emp_title_id
-from employees
-where emp_no = 10010;
+ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "employees" ("emp_no");
+
+ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_dept_no" FOREIGN KEY("dept_no")
+REFERENCES "departments" ("dept_no");
+
+ALTER TABLE "employees" ADD CONSTRAINT "fk_employees_emp_title_id" FOREIGN KEY("emp_title_id")
+REFERENCES "titles" ("title_id");
 
 
-Data Analysis
+Data Analysis (updated 11/27/22)
 --Query listing the employee number, last name, first name, sex, and salary of each employee.
 select employees.emp_no, employees.last_name, employees.first_name, employees.sex, salaries.salary
 from employees join salaries on salaries.emp_no = employees.emp_no
@@ -117,4 +121,4 @@ order by emp_no;
 select last_name, count(*)
 from employees
 group by last_name
-order by last_name;
+order by "count" desc;
